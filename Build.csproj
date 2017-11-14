@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="DevBuild">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+    <Watch Include="**\*.cs" />
+  </ItemGroup>
+
+  <Target Name="DevBuild">
+    <Error Text="I am here"/>
+  </Target>
+
+</Project>
