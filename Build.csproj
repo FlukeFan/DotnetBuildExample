@@ -9,8 +9,12 @@
     <Watch Include="**\*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectsToBuild Include="Domain\Domain.csproj" />
+  </ItemGroup>
+
   <Target Name="DevBuild">
-    <Error Text="I am here"/>
+    <MSBuild Projects="@(ProjectsToBuild)" />
   </Target>
 
 </Project>
