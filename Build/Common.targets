@@ -7,21 +7,21 @@
     <CoverageTarget Condition="'$(CoverageTarget)'==''">90</CoverageTarget>
 
     <OpenCoverExe>$(NuGetPackageRoot)OpenCover\4.6.519\tools\OpenCover.Console.exe</OpenCoverExe>
-    <NUnitExe>$(NuGetPackageRoot)NUnit.ConsoleRunner\3.7.0\tools\nunit3-console.exe</NUnitExe>
     <VsTestConsole>$(MSBuildExtensionsPath)vstest.console.dll</VsTestConsole>
     <ReportGeneratorExe>$(NuGetPackageRoot)reportgenerator\3.0.2\tools\ReportGenerator.exe</ReportGeneratorExe>
     <VerifyCoverageJs>$(MSBuildThisFileDirectory)\VerifyCoverage.js</VerifyCoverageJs>
 
     <Asterisk>%2A</Asterisk>
     <TestAssembly>$(AssemblyName).dll</TestAssembly>
-    <TestOutput>$(AssemblyName).results.xml</TestOutput>
+    <TestSuccessFlag>$(AssemblyName).success.flg</TestSuccessFlag>
+    <CoverageOutput>$(AssemblyName).coverage.xml</CoverageOutput>
     <CoverFilterFileOption Condition="!Exists('CoverageFilter.txt')"></CoverFilterFileOption>
     <CoverFilterFileOption Condition="Exists('CoverageFilter.txt')">-filterfile:CoverageFilter.txt</CoverFilterFileOption>
 
   </PropertyGroup>
 
   <ItemGroup>
-    <TestDependencies Include="$(TargetDir)\$(AssemblyName).dll" />
+    <TestDependencies Include="$(OutDir)\$(AssemblyName).dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,18 +29,7 @@
     <CoverFilter Include="+[$(Asterisk)]$(Asterisk)" />
   </ItemGroup>
 
-  <Target Name="RunTests_Init">
-    <PropertyGroup>
-      <TestSuccessFlag>$(OutDir)$(AssemblyName).success.flg</TestSuccessFlag>
-      <CoverageOutput>$(OutDir)$(AssemblyName).coverage.xml</CoverageOutput>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="RunTests" DependsOnTargets="RunTests_Init" Condition="'$(RunTests)'=='true' or '$(FilterTest)'!=''">
-    <CallTarget Targets="RunTests_AfterInit" />
-  </Target>
-
-  <Target Name="RunTests_AfterInit" Inputs="@(TestDependencies)" Outputs="$(TestSuccessFlag)">
+  <Target Name="RunTests" Condition="'$(RunTests)'=='true' or '$(FilterTest)'!=''" Inputs="@(TestDependencies)" Outputs="$(OutDir)$(TestSuccessFlag)">
     <CallTarget Targets="RunTestsWithFilter" Condition="'$(FilterTest)'!=''" />
     <CallTarget Targets="RunTestsWithCoverage" Condition="'$(FilterTest)'==''" />
   </Target>
@@ -51,11 +40,11 @@
 
   <Target Name="RunTestsWithCoverage">
     <Error Text="Coverage will only work from a Windows client.  Current OS: $(OS)" Condition="'$(OS)'!='Windows_NT'" />
-    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:test -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
+    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(OutDir)$(TestAssembly)&quot; -register:user -oldstyle -output:$(OutDir)$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
     <RemoveDir Directories="$(OutDir)\CoverageReport" />
-    <Exec Command="$(ReportGeneratorExe) -reports:$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
+    <Exec Command="$(ReportGeneratorExe) -reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
 <!--    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)\CoverageReport\Summary.xml" />-->
-    <Touch Files="$(TestSuccessFlag)" AlwaysCreate="true" />
+    <Touch Files="$(OutDir)$(TestSuccessFlag)" AlwaysCreate="true" />
   </Target>
 
 </Project>
