@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <Import Project="..\Build\Common.targets" />
-  
+
   <Target Name="After_Build" AfterTargets="Build">
     <CallTarget Targets="RunTests" />
   </Target>

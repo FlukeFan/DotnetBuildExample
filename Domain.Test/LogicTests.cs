@@ -23,7 +23,7 @@ namespace Domain.Test
 
             var response = logic.FindValue("blah");
 
-            response.Should().Be("blax");
+            response.Should().Be("blah");
         }
     }
 }
