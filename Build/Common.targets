@@ -6,10 +6,10 @@
     <Version>0.0.0.3</Version>
     <CoverageTarget Condition="'$(CoverageTarget)'==''">90</CoverageTarget>
 
-    <OpenCoverExe>$(MSBuildThisFileDirectory)\..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe</OpenCoverExe>
+    <OpenCoverExe>$(NuGetPackageRoot)OpenCover\4.6.519\tools\OpenCover.Console.exe</OpenCoverExe>
     <NUnitExe>$(NuGetPackageRoot)NUnit.ConsoleRunner\3.7.0\tools\nunit3-console.exe</NUnitExe>
     <VsTestConsole>$(MSBuildExtensionsPath)vstest.console.dll</VsTestConsole>
-    <ReportGeneratorExe>$(MSBuildThisFileDirectory)\..\packages\ReportGenerator.3.0.2\tools\ReportGenerator.exe</ReportGeneratorExe>
+    <ReportGeneratorExe>$(NuGetPackageRoot)reportgenerator\3.0.2\tools\ReportGenerator.exe</ReportGeneratorExe>
     <VerifyCoverageJs>$(MSBuildThisFileDirectory)\VerifyCoverage.js</VerifyCoverageJs>
 
     <Asterisk>%2A</Asterisk>
@@ -25,9 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-<!--    <CoverFilter Include="-[FluentAssertions$(Asterisk)]$(Asterisk)" />
-    <CoverFilter Include="-[FluentMigrator$(Asterisk)]$(Asterisk)" />
-    <CoverFilter Include="+[$(Asterisk)]$(Asterisk)" />-->
+    <CoverFilter Include="-[FluentAssertions$(Asterisk)]$(Asterisk)" />
+    <CoverFilter Include="+[$(Asterisk)]$(Asterisk)" />
   </ItemGroup>
 
   <Target Name="RunTests_Init">
@@ -52,11 +51,10 @@
 
   <Target Name="RunTestsWithCoverage">
     <Error Text="Coverage will only work from a Windows client.  Current OS: $(OS)" Condition="'$(OS)'!='Windows_NT'" />
-    <!--    <Exec Command="$(OpenCoverExe) -targetdir:$(OutDir) -target:$(NUnitExe) -targetargs:&quot;$(TestAssembly) /result=$(TestOutput)&quot; -register:user -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
+    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:test -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
     <RemoveDir Directories="$(OutDir)\CoverageReport" />
     <Exec Command="$(ReportGeneratorExe) -reports:$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
-    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)\CoverageReport\Summary.xml" />-->
-    <Exec Command="dotnet &quot;$(VsTestConsole)&quot; $(TestAssembly)" WorkingDirectory="$(OutDir)" />
+<!--    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)\CoverageReport\Summary.xml" />-->
     <Touch Files="$(TestSuccessFlag)" AlwaysCreate="true" />
   </Target>
 
