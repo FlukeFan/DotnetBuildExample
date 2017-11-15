@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+
+    <Version>0.0.0.3</Version>
+    <CoverageTarget Condition="'$(CoverageTarget)'==''">90</CoverageTarget>
+
+    <NuGetExe>$(MSBuildThisFileDirectory)\..\packages\NuGet.CommandLine.4.3.0\tools\NuGet.exe</NuGetExe>
+    <OpenCoverExe>$(MSBuildThisFileDirectory)\..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe</OpenCoverExe>
+    <NUnitExe>$(NuGetPackageRoot)NUnit.ConsoleRunner\3.7.0\tools\nunit3-console.exe</NUnitExe>
+    <VsTestConsole>$(MSBuildExtensionsPath)vstest.console.dll</VsTestConsole>
+    <ReportGeneratorExe>$(MSBuildThisFileDirectory)\..\packages\ReportGenerator.3.0.2\tools\ReportGenerator.exe</ReportGeneratorExe>
+    <VerifyCoverageJs>$(MSBuildThisFileDirectory)\VerifyCoverage.js</VerifyCoverageJs>
+
+    <Asterisk>%2A</Asterisk>
+    <TestAssembly>$(AssemblyName).dll</TestAssembly>
+    <TestOutput>$(AssemblyName).results.xml</TestOutput>
+    <CoverageOutput>$(OutDir)\$(AssemblyName).coverage.xml</CoverageOutput>
+    <TestSuccessFlag>$(OutDir)\$(AssemblyName).success.flg</TestSuccessFlag>
+    <CoverFilterFileOption Condition="!Exists('CoverageFilter.txt')"></CoverFilterFileOption>
+    <CoverFilterFileOption Condition="Exists('CoverageFilter.txt')">-filterfile:CoverageFilter.txt</CoverFilterFileOption>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TestDependencies Include="$(OutDir)\$(AssemblyName).dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <CoverFilter Include="-[FluentAssertions$(Asterisk)]$(Asterisk)" />
+    <CoverFilter Include="-[FluentMigrator$(Asterisk)]$(Asterisk)" />
+    <CoverFilter Include="+[$(Asterisk)]$(Asterisk)" />
+  </ItemGroup>
+
+  <Target Name="RunTests" Condition="'$(RunTests)'=='true' or '$(FilterTest)'!=''" Inputs="@(TestDependencies)" Outputs="$(TestSuccessFlag)">
+    <CallTarget Targets="RunTestsWithCoverage" Condition="'$(FilterTest)'==''" />
+    <CallTarget Targets="RunTestsWithFilter" Condition="'$(FilterTest)'!=''" />
+  </Target>
+
+  <Target Name="RunTestsWithFilter">
+    <Exec Command="$(NUnitExe) $(TestAssembly) /result=$(TestOutput) --where &quot;test =~ $(FilterTest)&quot;" WorkingDirectory="$(OutDir)" />
+  </Target>
+
+  <Target Name="RunTestsWithCoverage">
+<!--    <Exec Command="$(OpenCoverExe) -targetdir:$(OutDir) -target:$(NUnitExe) -targetargs:&quot;$(TestAssembly) /result=$(TestOutput)&quot; -register:user -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
+    <RemoveDir Directories="$(OutDir)\CoverageReport" />
+    <Exec Command="$(ReportGeneratorExe) -reports:$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
+    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)\CoverageReport\Summary.xml" />-->
+    <Exec Command="dotnet &quot;$(VsTestConsole)&quot; $(TestAssembly)" WorkingDirectory="$(OutDir)" />
+    <Error Text="got to here!!" />
+    <Touch Files="$(TestSuccessFlag)" AlwaysCreate="true" />
+  </Target>
+
+  <ItemGroup>
+    <PackageDependencies Include="$(AssemblyName).nuspec" />
+    <PackageDependencies Include="bin\$(Configuration)\$(AssemblyName).dll" />
+  </ItemGroup>
+
+  <Target Name="PackageNuGet" Inputs="@(PackageDependencies)" Outputs="..\_output\$(AssemblyName).$(Version).nupkg">
+    <Error Text="Missing $(AssemblyName).nuspec" Condition="!Exists('$(AssemblyName).nuspec')" />
+    <Exec Command="$(NuGetExe) pack $(MSBuildProjectFile) -OutputDirectory ..\_output -Properties Configuration=$(Configuration);OutDir=$(OutDir)" />
+  </Target>
+
+</Project>
