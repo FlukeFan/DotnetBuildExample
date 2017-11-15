@@ -43,7 +43,7 @@
     <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(OutDir)$(TestAssembly)&quot; -register:user -oldstyle -output:$(OutDir)$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" />
     <RemoveDir Directories="$(OutDir)\CoverageReport" />
     <Exec Command="$(ReportGeneratorExe) -reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
-<!--    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)\CoverageReport\Summary.xml" />-->
+    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)CoverageReport\Summary.xml" />
     <Touch Files="$(OutDir)$(TestSuccessFlag)" AlwaysCreate="true" />
   </Target>
 
