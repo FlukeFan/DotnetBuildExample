@@ -13,6 +13,7 @@
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
     <Watch Include="..\**\*.cs" />
     <Watch Include="..\**\*.csproj" />
+    <Watch Include="..\**\*.targets" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -30,16 +31,19 @@
     <ProjectsToClean Include="..\Domain\*.csproj" />
   </ItemGroup>
 
-  <Target Name="After_Restore" AfterTargets="Restore">
-    <CallTarget Targets="Build" />
+  <Target Name="ExportBuild" AfterTargets="Build">
     <ItemGroup>
       <BuildBinaries Include="$(OutDir)*" />
     </ItemGroup>
     <Copy SourceFiles="@(BuildBinaries)" DestinationFolder="bin" />
+    <Message Text="Exported Build binaries to $(MSBuildThisFileDirectory)bin" />
+  </Target>
+
+  <Target Name="After_Restore" AfterTargets="Restore">
     <MSBuild Projects="@(ProjectsToBuild)" Targets="Restore" />
   </Target>
 
-  <Target Name="DevBuild">
+  <Target Name="DevBuild" DependsOnTargets="Build">
     <CreateProperty Value="Configuration=$(Configuration);RunTests=$(RunTests)">
       <Output TaskParameter="Value" PropertyName="GlobalProperties" />
     </CreateProperty>

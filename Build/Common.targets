@@ -11,7 +11,6 @@
     <OpenCoverExe>$(NuGetPackageRoot)OpenCover\4.6.519\tools\OpenCover.Console.exe</OpenCoverExe>
     <VsTestConsole>$(MSBuildExtensionsPath)vstest.console.dll</VsTestConsole>
     <ReportGeneratorExe>$(NuGetPackageRoot)reportgenerator\3.0.2\tools\ReportGenerator.exe</ReportGeneratorExe>
-    <VerifyCoverageJs>$(MSBuildThisFileDirectory)\VerifyCoverage.js</VerifyCoverageJs>
 
     <Asterisk>%2A</Asterisk>
     <TestAssembly>$(AssemblyName).dll</TestAssembly>
@@ -43,9 +42,9 @@
   <Target Name="RunTestsWithCoverage">
     <Error Text="Coverage will only work from a Windows client.  Current OS: $(OS)" Condition="'$(OS)'!='Windows_NT'" />
     <ColorExec FileName="$(OpenCoverExe)" Arguments="-target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(TestAssembly) --logger:trx&quot; -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" WorkingDirectory="$(OutDir)" />
-    <RemoveDir Directories="$(OutDir)\CoverageReport" />
-    <ColorExec FileName="$(ReportGeneratorExe)" Arguments="-reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
-    <ColorExec FileName="CScript" Arguments="//NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)CoverageReport\Summary.xml" />
+    <RemoveDir Directories="$(OutDir)CoverageReport" />
+    <ColorExec FileName="$(ReportGeneratorExe)" Arguments="-reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
+    <ColorExec FileName="dotnet" Arguments="&quot;$(MSBuildThisFileDirectory)bin\Build.dll&quot; VerifyCoverage $(CoverageTarget) $(OutDir)CoverageReport/Summary.xml" />
     <Touch Files="$(OutDir)$(TestSuccessFlag)" AlwaysCreate="true" />
   </Target>
 

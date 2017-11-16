@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace Build
+﻿namespace Build
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Nothing implemented yet");
+            Command.TryConsole(() =>
+            {
+                Command.Execute(args);
+            });
         }
     }
 }
