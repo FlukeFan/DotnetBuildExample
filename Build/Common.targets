@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)bin\Build.dll" TaskName="Build.ColorExec" />
+
   <PropertyGroup>
 
     <Version>0.0.0.3</Version>
@@ -35,15 +37,15 @@
   </Target>
 
   <Target Name="RunTestsWithFilter">
-    <Exec Command="dotnet &quot;$(VsTestConsole)&quot; $(TestAssembly) --logger:trx --testcasefilter:FullyQualifiedName~$(FilterTest)" WorkingDirectory="$(OutDir)" />
+    <ColorExec FileName="dotnet" Arguments="&quot;$(VsTestConsole)&quot; $(TestAssembly) --logger:trx --testcasefilter:FullyQualifiedName~$(FilterTest)" WorkingDirectory="$(OutDir)" />
   </Target>
 
   <Target Name="RunTestsWithCoverage">
     <Error Text="Coverage will only work from a Windows client.  Current OS: $(OS)" Condition="'$(OS)'!='Windows_NT'" />
-    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(TestAssembly) --logger:trx&quot; -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true" />
+    <ColorExec FileName="$(OpenCoverExe)" Arguments="-target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(TestAssembly) --logger:trx&quot; -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" WorkingDirectory="$(OutDir)" />
     <RemoveDir Directories="$(OutDir)\CoverageReport" />
-    <Exec Command="$(ReportGeneratorExe) -reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
-    <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)CoverageReport\Summary.xml" />
+    <ColorExec FileName="$(ReportGeneratorExe)" Arguments="-reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
+    <ColorExec FileName="CScript" Arguments="//NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)CoverageReport\Summary.xml" />
     <Touch Files="$(OutDir)$(TestSuccessFlag)" AlwaysCreate="true" />
   </Target>
 

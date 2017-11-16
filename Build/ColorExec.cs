@@ -7,10 +7,10 @@ namespace Build
     public class ColorExec : Task
     {
         [Required]
-        public string FileName { get; set; }
+        public string FileName          { get; set; }
 
-        public string Arguments { get; set; }
-        public string WorkingDirectory { get; set; }
+        public string Arguments         { get; set; }
+        public string WorkingDirectory  { get; set; }
 
         public override bool Execute()
         {
@@ -22,7 +22,6 @@ namespace Build
                 process.StartInfo.Arguments = Arguments;
                 process.StartInfo.WorkingDirectory = WorkingDirectory;
                 process.Start();
-                process.BeginOutputReadLine();
                 process.WaitForExit();
 
                 return process.ExitCode == 0;

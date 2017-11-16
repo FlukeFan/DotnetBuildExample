@@ -7,17 +7,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{67A4D3AF-3F6A-42F6-B10D-7BA8791F9E7B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Build.csproj = Build.csproj
 		CommandPrompt.bat = CommandPrompt.bat
 		readme.txt = readme.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Test", "Domain.Test\Domain.Test.csproj", "{76DEB6B4-2EDB-417E-8CAA-931A38014F62}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{ED2B35E5-B2AC-4AA2-9D8B-0DA06AEF924E}"
-	ProjectSection(SolutionItems) = preProject
-		Build\Common.targets = Build\Common.targets
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "Build\Build.csproj", "{0E48C5C4-6868-4EBF-AAAB-A426F5CB82AF}"
 EndProject
