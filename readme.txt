@@ -1,6 +1,6 @@
 
-dotnet watch test example
-=========================
+dotnet build example
+====================
 
 Open CommandPrompt.bat
 
