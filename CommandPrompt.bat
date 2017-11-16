@@ -1,5 +1,5 @@
 @CD /D "%~dp0"
-@title DnTest Command Prompt
+@title DotnetBuildExample Command Prompt
 @SET PATH=C:\Program Files\dotnet\;%PATH%
 type readme.txt
 @doskey bc=dotnet clean

@@ -48,6 +48,7 @@
       <Output TaskParameter="Value" PropertyName="GlobalProperties" />
     </CreateProperty>
     <MSBuild Projects="@(ProjectsToBuild)" Properties="$(GlobalProperties)" RunEachTargetSeparately="true" StopOnFirstFailure="true" />
+    <Message Importance="high" Text="Build Success" />
   </Target>
 
   <Target Name="After_Clean" AfterTargets="Clean">
