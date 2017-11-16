@@ -30,13 +30,13 @@
     <CoverFilter Include="+[$(Asterisk)]$(Asterisk)" />
   </ItemGroup>
 
-  <Target Name="RunTests" Condition="'$(RunTests)'=='true' or '$(FilterTest)'!=''" Inputs="@(TestDependencies)" Outputs="$(OutDir)$(TestSuccessFlag)">
-    <CallTarget Targets="RunTestsWithFilter" Condition="'$(FilterTest)'!=''" />
-    <CallTarget Targets="RunTestsWithCoverage" Condition="'$(FilterTest)'==''" />
+  <Target Name="RunTests" Condition="'$(RunTests)'=='true' or '$(FilterTestFqn)'!=''" Inputs="@(TestDependencies)" Outputs="$(OutDir)$(TestSuccessFlag)">
+    <CallTarget Targets="RunTestsWithFilter" Condition="'$(FilterTestFqn)'!=''" />
+    <CallTarget Targets="RunTestsWithCoverage" Condition="'$(FilterTestFqn)'==''" />
   </Target>
 
   <Target Name="RunTestsWithFilter">
-    <ColorExec FileName="dotnet" Arguments="&quot;$(VsTestConsole)&quot; $(TestAssembly) --logger:trx --testcasefilter:FullyQualifiedName~$(FilterTest)" WorkingDirectory="$(OutDir)" />
+    <ColorExec FileName="dotnet" Arguments="&quot;$(VsTestConsole)&quot; $(TestAssembly) --logger:trx --testcasefilter:FullyQualifiedName~$(FilterTestFqn)" WorkingDirectory="$(OutDir)" />
   </Target>
 
   <Target Name="RunTestsWithCoverage">
