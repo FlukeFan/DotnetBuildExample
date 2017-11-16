@@ -35,12 +35,12 @@
   </Target>
 
   <Target Name="RunTestsWithFilter">
-    <Exec Command="dotnet &quot;$(VsTestConsole)&quot; $(TestAssembly) --testcasefilter:FullyQualifiedName~$(FilterTest)" WorkingDirectory="$(OutDir)" />
+    <Exec Command="dotnet &quot;$(VsTestConsole)&quot; $(TestAssembly) --logger:trx --testcasefilter:FullyQualifiedName~$(FilterTest)" WorkingDirectory="$(OutDir)" />
   </Target>
 
   <Target Name="RunTestsWithCoverage">
     <Error Text="Coverage will only work from a Windows client.  Current OS: $(OS)" Condition="'$(OS)'!='Windows_NT'" />
-    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(OutDir)$(TestAssembly)&quot; -register:user -oldstyle -output:$(OutDir)$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="$(OpenCoverExe) -target:dotnet.exe -targetargs:&quot;&quot;&quot;$(VsTestConsole)&quot;&quot; $(TestAssembly) --logger:trx&quot; -register:user -oldstyle -output:$(CoverageOutput) -returntargetcode -filter:&quot;@(CoverFilter, ' ')&quot; $(CoverFilterFileOption)" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true" />
     <RemoveDir Directories="$(OutDir)\CoverageReport" />
     <Exec Command="$(ReportGeneratorExe) -reports:$(OutDir)$(CoverageOutput) -targetdir:$(OutDir)\CoverageReport -verbosity:Error -ReportTypes:Html;XmlSummary" />
     <Exec Command="CScript //NoLogo $(VerifyCoverageJs) $(CoverageTarget) $(OutDir)CoverageReport\Summary.xml" />
